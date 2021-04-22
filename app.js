@@ -3,10 +3,23 @@ const request = require('request');
 const geocode = require('./utils/geocode');
 const forecast = require('./utils/forecast');
 
-geocode('Milton Keynes', (error, data) => {
-	const latLong = `${data.latitude},${data.longitude}`
-	forecast(latLong, (error, data) => {
-		console.log(error);
-		console.log(data);
+const address = process.argv[2];
+
+if(!address){
+	console.log('Please provide an address');
+} else {
+	geocode( address , (error, {latitude, longitude, location} = {}) => {
+		if(error){
+			return console.log(error);
+		}
+		const latLong = `${latitude},${longitude}`;
+		forecast(latLong, (error, forecastData) => {
+			if(error){
+				return console.log(error);
+			}
+
+			console.log(location);
+			console.log(forecastData);
+		})
 	})
-})
+}
